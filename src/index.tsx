@@ -10,8 +10,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './app/MaterialTheme';
 import { BrowserRouter as Router } from "react-router-dom";
 import './css/index.css';
-// import {
-//   BrowserRouter as Router} from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
