@@ -283,6 +283,7 @@
   width: 305px;
   height: 302px;
   border-radius: 12px;
+  cursor: pointer;
   background: rgb(255, 255, 255);
 }
 
