@@ -145,6 +145,43 @@ export default function Products() {
             </Stack>
           </Stack>
         </Container>
+        <div className="brands-logo">
+          <Container sx={{marginTop:"84px"}}>
+            <Box className="logo-title">
+              Our family brands
+            </Box>
+            <Stack className="logo-imgs">
+              <Button>
+                <img src="/img/gurme.webp" alt=""/>
+              </Button>
+              <Button>
+                <img src="/img/seafood.webp" alt=""/>
+              </Button>
+              <Button>
+                <img src="/img/sweets.webp" alt=""/>
+              </Button>
+              <Button>
+                <img src="/img/doner.webp" alt=""/>
+              </Button>
+            </Stack>
+          </Container>
+        </div>
+
+        <div className="address">
+          <Container>
+            <Stack className="address-area">
+              <Box className="title">Our address</Box>
+              <iframe
+                style={{ marginTop: "60px" }}
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3167.319131247058!2d128.0829753!3d35.1801889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x356e308da2897b87%3A0x3880b1459bb117c0!2sJinju-si%2C%20Gyeongsangnam-do%2C%20South%20Korea!5e0!3m2!1sen!2skr!4v1696240032161!5m2!1sen!2skr"
+                width="1320"
+                height="570"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </Stack>
+          </Container>
+        </div>
+
       </div>
     </div>
   )

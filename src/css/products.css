@@ -259,3 +259,74 @@
   align-items: center;
   justify-content: center;
 }
+
+.products-page .brands-logo{
+  margin-top: 53px;
+  width: 100%;
+  height: 630px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  background: rgb(13, 21, 24);
+}
+
+.products-page .brands-logo .logo-title{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  text-transform: capitalize;
+  font-family: Roboto;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 42px;
+  letter-spacing: 0%;
+  color: rgb(227, 192, 141);
+}
+
+.products-page .brands-logo .logo-imgs{
+  margin-top: 59px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 87px;
+  align-items: center;
+}
+
+.products-page .brands-logo .logo-imgs img{
+  width: 258.78px;
+  height: 350px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 22px 0px rgb(228, 212, 212);
+  background: rgb(13, 21, 24);
+}
+
+.products-page .address {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.products-page .address .address-area{
+  width: 100%;
+  height: 701px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 80px;
+  margin-bottom: 60px;
+}
+
+.products-page .address .address-area .title{
+  font-family: Roboto Serif;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 42px;
+  letter-spacing: 0%;
+  text-transform: capitalize;
+  color: rgb(52, 52, 52);
+}
