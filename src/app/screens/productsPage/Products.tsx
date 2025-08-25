@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Container, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -14,39 +14,44 @@ import { createSelector, Dispatch } from "@reduxjs/toolkit";
 import { setProducts } from "./slice";
 import { Product } from "../../../lib/types/product";
 import { retrieveProducts } from "./selector";
+import ProductService from "../../services/ProductService";
+import { ProductCollection } from "../../../lib/enums/product.enums";
+import { serverApi } from "../../../lib/config";
 
 /** REDUX SLICE & SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
   setProducts: (data: Product[]) => dispatch(setProducts(data)),
 });
 
-const productsRetriever = createSelector(
-  retrieveProducts,
-  (products) => ({ products })
-);
-
-
-const products = [
-  { productName: "Cutlet", imagePath: "/img/cutlet.webp" },
-  { productName: "Kebab", imagePath: "/img/kebab-fresh.webp" },
-  { productName: "Kebab", imagePath: "/img/kebab.webp" },
-  { productName: "Lavash", imagePath: "/img/lavash.webp" },
-  { productName: "Lavash", imagePath: "/img/lavash.webp" },
-  { productName: "Cutlet", imagePath: "/img/cutlet.webp" },
-  { productName: "Kebab", imagePath: "/img/kebab.webp" },
-  { productName: "Kebab", imagePath: "/img/kebab-fresh.webp" },
-];
-
+const productsRetriever = createSelector(retrieveProducts, (products) => ({
+  products,
+}));
 
 export default function Products() {
+  const { setProducts } = actionDispatch(useDispatch());
+  const { products } = useSelector(productsRetriever);
+
+  useEffect(() => {
+    const product = new ProductService();
+    product
+      .getProducts({
+        page: 1,
+        limit: 8,
+        order: "createdAt",
+        productCollection: ProductCollection.DISH,
+        search: "",
+      })
+      .then((data) => setProducts(data))
+      .catch((err) => console.log(err));
+  }, []);
   return (
     <div className="products-page">
       <div className="products">
         <Container>
           <Stack flexDirection={"column"} alignItems={"center"} mt="77px">
-            <Stack 
-              flexDirection={"row"} 
-              justifyContent={"right"} 
+            <Stack
+              flexDirection={"row"}
+              justifyContent={"right"}
               alignItems={"center"}
               width={"100%"}
             >
@@ -54,13 +59,13 @@ export default function Products() {
                 <Box className="top-text">Burak restaurant</Box>
                 <Stack flexDirection={"row"} alignItems={"center"}>
                   <input placeholder="Type here" className="input" />
-                  <Button 
+                  <Button
                     variant="contained"
                     color="primary"
                     className="input-btn"
                   >
                     Search
-                    <SearchIcon/>
+                    <SearchIcon />
                   </Button>
                 </Stack>
               </Stack>
@@ -84,58 +89,68 @@ export default function Products() {
                 variant={"contained"}
                 color={"secondary"}
                 className={"order"}
-                sx={{marginRight:"56px"}}
+                sx={{ marginRight: "56px" }}
               >
                 Views
               </Button>
             </Stack>
-            <Stack className="list-category-section" >
+            <Stack className="list-category-section">
               <Stack className="product-category">
-                {["DISH", "salad", "drink", "desert", "other"].map((item, i) =>(
-                  
+                {["DISH", "salad", "drink", "desert", "other"].map(
+                  (item, i) => (
                     <Button
                       key={i}
                       variant={"contained"}
                       color={item === "DISH" ? "primary" : "secondary"}
                       className="order"
-                      sx={{marginTop:item === "DISH" ? "25px" : "10px"}}
+                      sx={{ marginTop: item === "DISH" ? "25px" : "10px" }}
                     >
-                    {item}
+                      {item}
                     </Button>
-                
-                ))}
+                  )
+                )}
               </Stack>
               <Stack className="product-wrapper">
-                {products.length !==0 ? (
-                  products.map((product, index) => {
+                {products.length !== 0 ? (
+                  products.map((product: Product) => {
+                    const imagePath = `${serverApi}/${product.productImages[0]}`;
+                    const sizeVolume =
+                      product.productCollection === ProductCollection.DRINK
+                        ? product.productVolume + "litre"
+                        : product.productSize + "size";
                     return (
-                      <Stack key={index} className="product-card">
+                      <Stack key={product._id} className="product-card">
                         <Stack
                           className="product-img"
-                          sx={{ backgroundImage: `url(${product.imagePath})` }}
+                          sx={{ backgroundImage: `url(${imagePath})` }}
                         >
-                          <div className="product-sale">Normal size</div>
+                          <div className="product-sale">{sizeVolume}</div>
                           <Button className="shop-btn">
                             <img
                               src="/icons/shopping-cart.svg"
                               style={{ display: "flex" }}
                             />
                           </Button>
-                          <Button className="view-btn" >
-                            <Badge badgeContent={20} color="secondary">
+                          <Button className="view-btn">
+                            <Badge badgeContent={product.productViews} color="secondary">
                               <RemoveRedEyeIcon
                                 sx={{
-                                  color:"white",
+                                  color:
+                                    product.productViews === 0
+                                      ? "gray"
+                                      : "white",
                                 }}
                               />
                             </Badge>
                           </Button>
                         </Stack>
                         <Box className="product-desc">
-                          <span className="product-title">{product.productName}</span>
+                          <span className="product-title">
+                            {product.productName}
+                          </span>
                           <div className="product-desc">
                             <MonetizationOnIcon />
-                            {12}
+                            {product.productPrice}
                           </div>
                         </Box>
                       </Stack>
@@ -152,7 +167,10 @@ export default function Products() {
                   count={3}
                   renderItem={(item) => (
                     <PaginationItem
-                      slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+                      slots={{
+                        previous: ArrowBackIcon,
+                        next: ArrowForwardIcon,
+                      }}
                       {...item}
                       color={"secondary"}
                     />
@@ -163,22 +181,20 @@ export default function Products() {
           </Stack>
         </Container>
         <div className="brands-logo">
-          <Container sx={{marginTop:"84px"}}>
-            <Box className="logo-title">
-              Our family brands
-            </Box>
+          <Container sx={{ marginTop: "84px" }}>
+            <Box className="logo-title">Our family brands</Box>
             <Stack className="logo-imgs">
               <Button>
-                <img src="/img/gurme.webp" alt=""/>
+                <img src="/img/gurme.webp" alt="" />
               </Button>
               <Button>
-                <img src="/img/seafood.webp" alt=""/>
+                <img src="/img/seafood.webp" alt="" />
               </Button>
               <Button>
-                <img src="/img/sweets.webp" alt=""/>
+                <img src="/img/sweets.webp" alt="" />
               </Button>
               <Button>
-                <img src="/img/doner.webp" alt=""/>
+                <img src="/img/doner.webp" alt="" />
               </Button>
             </Stack>
           </Container>
@@ -198,8 +214,7 @@ export default function Products() {
             </Stack>
           </Container>
         </div>
-
       </div>
     </div>
-  )
+  );
 }
