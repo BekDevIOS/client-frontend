@@ -32,11 +32,14 @@ export default function App() {
   const handleSignupClose = () => setSignupOpen(false);
   const handleLoginClose = () => setLoginOpen(false);
 
-  const handleLogoutClick = (e: React.MouseEvent<HTMLElement>) => {
+  const handleLogoutOpen = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
   };
 
-  const handleCloseLogout = () => setAnchorEl(null);
+  const handleCloseLogout = () => {
+    (document.activeElement as HTMLElement | null)?.blur?.();
+    setAnchorEl(null);
+  };
 
   const handleLogoutRequest = async () => {
     try {
@@ -51,6 +54,13 @@ export default function App() {
     }
   };
 
+  const handleLogoutClick = async (e: React.MouseEvent<HTMLLIElement>) => {
+    (e.currentTarget as HTMLElement).blur();
+    handleCloseLogout();
+    await Promise.resolve();
+    await handleLogoutRequest();
+  };
+
   return (
     <>
       {location.pathname === "/" ? (
@@ -63,9 +73,9 @@ export default function App() {
           setSignupOpen={setSignupOpen}
           setLoginOpen={setLoginOpen}
           anchorEl={anchorEl}
-          handleLogoutClick={handleLogoutClick}
+          handleLogoutOpen={handleLogoutOpen}
           handleCloseLogout={handleCloseLogout}
-          handleLogoutRequest={handleLogoutRequest}
+          handleLogoutClick={handleLogoutClick}
         />
       ) : (
         <OtherNavbar
@@ -77,9 +87,9 @@ export default function App() {
           setSignupOpen={setSignupOpen}
           setLoginOpen={setLoginOpen}
           anchorEl={anchorEl}
-          handleLogoutClick={handleLogoutClick}
+          handleLogoutOpen={handleLogoutOpen}
           handleCloseLogout={handleCloseLogout}
-          handleLogoutRequest={handleLogoutRequest}
+          handleLogoutClick={handleLogoutClick}
         />
       )}
       <Switch>

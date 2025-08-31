@@ -22,10 +22,12 @@ interface HomeNavbarProps {
   onDeleteAll: () => void;
   setSignupOpen: (isOpen: boolean) => void;
   setLoginOpen: (isOpen: boolean) => void;
-  handleLogoutClick: (e: React.MouseEvent<HTMLElement>) => void;
+  handleLogoutOpen: (e: React.MouseEvent<HTMLElement>) => void;
   anchorEl: HTMLElement | null;
   handleCloseLogout: () => void;
-  handleLogoutRequest: () => void;
+  handleLogoutClick: (
+    e: React.MouseEvent<HTMLLIElement>
+  ) => void | Promise<void>;
 }
 
 export default function HomeNavbar(props: HomeNavbarProps) {
@@ -37,10 +39,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
     onRemove,
     setLoginOpen,
     setSignupOpen,
-    handleLogoutClick,
+    handleLogoutOpen,
     anchorEl,
     handleCloseLogout,
-    handleLogoutRequest,
+    handleLogoutClick,
   } = props;
   const { authMember } = useGlobals();
   return (
@@ -110,7 +112,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     : "/icons/default-user.svg"
                 }
                 aria-haspopup={"true"}
-                onClick={handleLogoutClick}
+                onClick={handleLogoutOpen}
               />
             )}
             <Menu
@@ -118,7 +120,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               id="account-menu"
               open={Boolean(anchorEl)}
               onClose={handleCloseLogout}
-              onClick={handleCloseLogout}
               PaperProps={{
                 elevation: 0,
                 sx: {
@@ -148,7 +149,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               transformOrigin={{ horizontal: "right", vertical: "top" }}
               anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-              <MenuItem onClick={handleLogoutRequest}>
+              <MenuItem onClick={handleLogoutClick}>
                 <ListItemIcon>
                   <Logout fontSize="small" style={{ color: "blue" }} />
                 </ListItemIcon>
