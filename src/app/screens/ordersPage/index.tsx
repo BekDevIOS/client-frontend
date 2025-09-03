@@ -1,18 +1,32 @@
 import { useState, SyntheticEvent } from "react";
-import { Container, Stack, Box, TextField, } from "@mui/material";
+import { Container, Stack, Box, TextField } from "@mui/material";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import LocationOnIcon from "@mui/icons-material/LocationOn"
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PausedOrders from "./PausedOrders";
 import ProcessOrders from "./ProcessOrders";
 import FinishedOrders from "./FinishedOrders";
-import TabPanel from "@mui/lab/TabPanel";
-import "../../../css/order.css"
 import Divider from "../../components/divider";
+import "../../../css/order.css";
+import { Dispatch } from "@reduxjs/toolkit";
+import { Order } from "../../../lib/types/order";
+import { setFinishedOrders, setPausedOrders, setProcessOrders } from "./slice";
+import { useDispatch } from "react-redux";
+
+/** REDUX SLICE & SELECTOR */
+const actionDispatch = (dispatch: Dispatch) => ({
+  setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
+  setProcessOrders: (data: Order[]) => dispatch(setProcessOrders(data)),
+  setFinishedOrders: (data: Order[]) => dispatch(setFinishedOrders(data)),
+});
 
 export default function OrdersPage() {
+  const { setFinishedOrders, setPausedOrders, setProcessOrders } =
+    actionDispatch(useDispatch());
   const [value, setValue] = useState("1");
+
+  /** HANDLERS  */
 
   const handleChange = (e: SyntheticEvent, newValue: string) => {
     setValue(newValue);
@@ -22,7 +36,7 @@ export default function OrdersPage() {
     <div className="order-page">
       <Container className="order-container">
         <Stack className="order-left">
-          <TabContext value={value} >
+          <TabContext value={value}>
             <Box className="order-nav-frame">
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <Tabs
@@ -49,10 +63,7 @@ export default function OrdersPage() {
           <Box className="order-info-box">
             <Box className="member-box">
               <div className="order-user-img">
-                <img
-                  src="/img/jay.jpeg"
-                  className="order-user-avatar"
-                />
+                <img src="/img/jay.jpeg" className="order-user-avatar" />
                 <div className="order-user-icon-box">
                   <img
                     src="/icons/user-badge.svg"
@@ -63,7 +74,7 @@ export default function OrdersPage() {
               <span className="order-user-name">Jay</span>
               <span className="order-user-prof">User</span>
               <Box className="user-location">
-                <Divider width="250" height="1" bg="#999"/>
+                <Divider width="250" height="1" bg="#999" />
                 <LocationOnIcon />
                 <span>South Korea, Jinju</span>
               </Box>
@@ -105,7 +116,6 @@ export default function OrdersPage() {
             </Box>
           </Box>
         </Stack>
-
       </Container>
     </div>
   );

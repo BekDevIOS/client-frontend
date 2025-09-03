@@ -1,7 +1,6 @@
 import axios from "axios";
-import { Messages, serverApi } from "../../lib/config";
+import { serverApi } from "../../lib/config";
 import { LoginInput, Member, MemberInput } from "../../lib/types/member";
-import { Message } from "@mui/icons-material";
 
 class MemberService {
   private readonly path: string;

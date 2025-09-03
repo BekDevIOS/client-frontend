@@ -29,6 +29,7 @@ const useBasket = () => {
     const exist: any = cartItems.find(
       (item: CartItem) => item._id === input._id
     );
+    console.log("CHECK>>>", typeof(cartJson))
     if (exist.quantity === 1) {
       const cartUpdate = cartItems.filter(
         (item: CartItem) => item._id !== input._id
