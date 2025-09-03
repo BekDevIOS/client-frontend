@@ -4,6 +4,8 @@ import { Member } from "../../lib/types/member";
 interface GlobalInterface {
   authMember: Member | null;
   setAuthMember: (member: Member | null) => void;
+  orderBulder: Date;
+  setOrderBulder: (input: Date) => void;
 }
 
 export const GlobalContext = createContext<GlobalInterface | undefined>(
