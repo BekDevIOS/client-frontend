@@ -36,7 +36,7 @@ export default function PausedOrders() {
                       <p className="title-dish">{product.productName}</p>
                       <Box className="price-box">
                         <p>${item.itemPrice}</p>
-                        <img src="/icons/close.svg" />
+                        <img src={"/icons/close.svg"} />
                         <p>{item.itemQuantity}</p>
                         <img src="/icons/pause.svg" />
                         <p>${item.itemQuantity * item.itemPrice}</p>
@@ -73,10 +73,15 @@ export default function PausedOrders() {
 
         {!pausedOrders ||
           (pausedOrders.length === 0 && (
-            <Box display="flex" flexDirection="row" justifyContent="center">
+            <Box
+              width={"800px"}
+              display="flex"
+              flexDirection="row"
+              justifyContent="center"
+            >
               <img
                 src={"/icons/noimage-list.svg"}
-                style={{ width: 300, height: 300 }}
+                style={{ width: 400, height: 400 }}
               />
             </Box>
           ))}
