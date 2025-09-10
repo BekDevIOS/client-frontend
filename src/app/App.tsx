@@ -17,6 +17,7 @@ import { useGlobals } from "./hooks/useGlobals";
 import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
+import QrLanding from "./components/qrLanding";
 
 export default function App() {
   const location = useLocation();
@@ -102,6 +103,9 @@ export default function App() {
         </Route>
         <Route path="/help">
           <HelpPage />
+        </Route>
+        <Route path={"/table/qr/:id"}>
+          <QrLanding />
         </Route>
         <Route path="/">
           <HomePage />
