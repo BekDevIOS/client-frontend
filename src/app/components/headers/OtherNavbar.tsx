@@ -51,7 +51,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
         <Stack className="menu">
           <Box>
             <NavLink to="/">
-              <img className="brand-logo" src="/icons/burak.svg"></img>
+              <img className="brand-logo" src="/icons/navruz.svg"></img>
             </NavLink>
           </Box>
           <Stack className="links">
@@ -158,22 +158,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
         </Stack>
         <Stack className="header-frame">
           <Stack className="detail">
-            <Box className={"head-main-txt"}>
-              World's Most Delicious Cousine
-            </Box>
-            <Box className={"wel-txt"}>The Choice, not just a choice</Box>
-            <Box className={"service-txt"}>24 hours service</Box>
-            <Box className={"signup"}>
-              {!authMember ? (
-                <Button
-                  variant={"contained"}
-                  className={"signup-button"}
-                  onClick={() => setSignupOpen(true)}
-                >
-                  SIGN UP
-                </Button>
-              ) : null}
-            </Box>
+          
           </Stack>
         </Stack>
       </Container>

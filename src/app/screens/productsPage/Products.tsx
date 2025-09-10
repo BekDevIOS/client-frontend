@@ -1,5 +1,14 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { Box, Button, Container, Stack, StepIconClassKey } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Stack,
+  StepIconClassKey,
+  Typography,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -32,6 +41,29 @@ const productsRetriever = createSelector(retrieveProducts, (products) => ({
 interface ProductProps {
   onAdd: (item: CartItem) => void;
 }
+
+const services = [
+  {
+    icon: "🍽️",
+    title: "Dine-In",
+    desc: "Enjoy authentic Uzbek flavors in a cozy atmosphere.",
+  },
+  {
+    icon: "🥡",
+    title: "Takeaway",
+    desc: "Fresh meals packed to go, perfect for busy days.",
+  },
+  {
+    icon: "🚚",
+    title: "Delivery",
+    desc: "Hot and fast meals delivered right to your doorstep.",
+  },
+  {
+    icon: "🎉",
+    title: "Catering",
+    desc: "Authentic cuisine for events, parties, and gatherings.",
+  },
+];
 
 export default function Products(props: ProductProps) {
   const { onAdd } = props;
@@ -288,22 +320,62 @@ export default function Products(props: ProductProps) {
           </Stack>
         </Container>
         <div className="brands-logo">
-          <Container sx={{ marginTop: "84px" }}>
-            <Box className="logo-title">Our family brands</Box>
-            <Stack className="logo-imgs">
-              <Button>
-                <img src="/img/gurme.webp" alt="" />
-              </Button>
-              <Button>
-                <img src="/img/seafood.webp" alt="" />
-              </Button>
-              <Button>
-                <img src="/img/sweets.webp" alt="" />
-              </Button>
-              <Button>
-                <img src="/img/doner.webp" alt="" />
-              </Button>
-            </Stack>
+          <Container sx={{ marginTop: "20px" }}>
+            <Box sx={{ color: "#fff", py: 8 }}>
+              <Container>
+                <Typography
+                  variant="h2"
+                  align="center"
+                  sx={{ mb: 6, fontWeight: "bold", color: "#d4af7f" }}
+                >
+                  Our Services
+                </Typography>
+
+                <Stack
+                  direction="row"
+                  spacing={4}
+                  justifyContent="center"
+                  flexWrap="wrap"
+                >
+                  {services.map((service, index) => (
+                    <Card
+                      key={index}
+                      sx={{
+                        width: 250,
+                        height: 300,
+                        bgcolor: "#1e1e1e",
+                        color: "#fff",
+                        textAlign: "center",
+                        borderRadius: 3,
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                        "&:hover": {
+                          transform: "scale(1.05)",
+                          transition: "0.3s",
+                        },
+                      }}
+                    >
+                      <CardContent>
+                        <Typography sx={{ fontSize: 50 }}>
+                          {service.icon}
+                        </Typography>
+                        <Typography
+                          variant="h3"
+                          sx={{ fontWeight: "bold", mt: 1 }}
+                        >
+                          {service.title}
+                        </Typography>
+                        <Typography
+                          variant="h4"
+                          sx={{ mt: 1, color: "#ccc" }}
+                        >
+                          {service.desc}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Stack>
+              </Container>
+            </Box>
           </Container>
         </div>
 
@@ -312,7 +384,7 @@ export default function Products(props: ProductProps) {
             <Stack className="address-area">
               <Box className="title">Our address</Box>
               <iframe
-                style={{ marginTop: "60px" }}
+                style={{ marginTop: "20px" }}
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3167.319131247058!2d128.0829753!3d35.1801889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x356e308da2897b87%3A0x3880b1459bb117c0!2sJinju-si%2C%20Gyeongsangnam-do%2C%20South%20Korea!5e0!3m2!1sen!2skr!4v1696240032161!5m2!1sen!2skr"
                 width="1320"
                 height="570"

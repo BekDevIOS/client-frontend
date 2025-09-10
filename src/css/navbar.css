@@ -2,9 +2,28 @@
     width: 100%;
     height: 773px;
     display: flex;
-    background: url("/public/img/banner.webp");
-    background-size: cover;
+    overflow: hidden;
  }
+
+.home-navbar .bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+
+.home-navbar .bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: -1;
+}
 
  .home-navbar .navbar-container{
   margin-top: 55px;
@@ -20,8 +39,9 @@
  }
 
  .home-navbar .navbar-container .menu .brand-logo{
-  width: 125px;
-  height: 30px;
+  display: block;
+  width: auto;
+  height: 50px;
  }
 
  .home-navbar .navbar-container .menu .links{
@@ -110,7 +130,7 @@
 }
 
 .home-navbar .navbar-container .header-frame .detail .service-txt{
-  margin-top: 23px;
+  margin-top: 50px;
   width: 153px;
   height: 23px;
   font-family: "Roboto Serif";
@@ -149,8 +169,8 @@
 .home-navbar .navbar-container .logo-frame {
   width: 100%;
   height: 100%;
-  background: url("/public/img/logo.webp");
-  background-size: contain;
+  background: url("/public/img/navruz_logo.svg");
+  background-size: cover;
   background-repeat: no-repeat;
   filter: invert(25%);
 }
@@ -165,7 +185,7 @@
     width: 100%;
     height: 400px;
     display: flex;
-    background: url("/public/img/banner.webp");
+    background: url("/public/img/navruz-banner2.jpg");
     background-size: cover;
  }
 
@@ -182,8 +202,9 @@
  }
 
  .other-navbar .navbar-container .menu .brand-logo{
-  width: 125px;
-  height: 30px;
+  display: block;
+  width: auto;
+  height: 50px;
  }
 
  .other-navbar .navbar-container .menu .links{
