@@ -10,7 +10,12 @@ import FinishedOrders from "./FinishedOrders";
 import Divider from "../../components/divider";
 import { Dispatch } from "@reduxjs/toolkit";
 import { Order, OrderInquiry } from "../../../lib/types/order";
-import { setFinishedOrders, setPausedOrders, setProcessOrders } from "./slice";
+import {
+  setFinishedOrders,
+  setPausedOrders,
+  setPendingOrders,
+  setProcessOrders,
+} from "./slice";
 import { useDispatch } from "react-redux";
 import { OrderStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
@@ -23,21 +28,29 @@ import { MemberType } from "../../../lib/enums/member.enum";
 /** REDUX SLICE & SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
   setPausedOrders: (data: Order[]) => dispatch(setPausedOrders(data)),
+  setPendingOrders: (data: Order[]) => dispatch(setPendingOrders(data)),
   setProcessOrders: (data: Order[]) => dispatch(setProcessOrders(data)),
   setFinishedOrders: (data: Order[]) => dispatch(setFinishedOrders(data)),
 });
 
 export default function OrdersPage() {
-  const { setFinishedOrders, setPausedOrders, setProcessOrders } =
-    actionDispatch(useDispatch());
-  const { orderBulder, authMember } = useGlobals();
+  const {
+    setFinishedOrders,
+    setPausedOrders,
+    setProcessOrders,
+    setPendingOrders,
+  } = actionDispatch(useDispatch());
+  const { orderBulder, authMember, authTable } = useGlobals();
   const history = useHistory();
   const [value, setValue] = useState("1");
-  const [orderInquiry, serOrderInquiry] = useState<OrderInquiry>({
+  const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
     limit: 5,
     orderStatus: OrderStatus.PAUSE,
   });
+
+  // TABLE & USER
+  const finishedOrder = authMember ? OrderStatus.COMPLETED : OrderStatus.SERVED;
 
   useEffect(() => {
     const order = new OrderService();
@@ -48,12 +61,23 @@ export default function OrdersPage() {
       .catch((err) => console.log(err));
 
     order
-      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.PROCESS })
+      .getMyOrders({
+        ...orderInquiry,
+        orderStatus: OrderStatus.PENDING,
+      })
+      .then((data) => setPendingOrders(data))
+      .catch((err) => console.log(err));
+
+    order
+      .getMyOrders({
+        ...orderInquiry,
+        orderStatus: OrderStatus.PROCESS,
+      })
       .then((data) => setProcessOrders(data))
       .catch((err) => console.log(err));
 
     order
-      .getMyOrders({ ...orderInquiry, orderStatus: OrderStatus.FINISH })
+      .getMyOrders({ ...orderInquiry, orderStatus: finishedOrder })
       .then((data) => setFinishedOrders(data))
       .catch((err) => console.log(err));
   }, [orderInquiry, orderBulder]);
@@ -64,7 +88,7 @@ export default function OrdersPage() {
     setValue(newValue);
   };
 
-  if (!authMember) history.push("/");
+  if (!authMember && !authTable) history.push("/");
   return (
     <div className="order-page">
       <Container className="order-container">
@@ -99,7 +123,9 @@ export default function OrdersPage() {
                 <img
                   src={
                     authMember?.memberImage
-                      ? `${serverApi}/${authMember.memberImage}`
+                      ? `${serverApi}/${authMember?.memberImage}`
+                      : authTable
+                      ? "/img/table.jpg"
                       : "/icons/default-user.svg"
                   }
                   className="order-user-avatar"
@@ -115,8 +141,12 @@ export default function OrdersPage() {
                   />
                 </div>
               </div>
-              <span className="order-user-name">{authMember?.memberNick}</span>
-              <span className="order-user-prof">{authMember?.memberType}</span>
+              <span className="order-user-name">
+                {authMember?.memberNick ?? authTable?.tableNumber}
+              </span>
+              <span className="order-user-prof">
+                {authMember?.memberType ?? "TABLE"}
+              </span>
               <Box className="user-location">
                 <Divider width="250" height="1" bg="#999" />
                 <LocationOnIcon />

@@ -63,7 +63,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 Products
               </NavLink>
             </Box>
-            {authMember ? (
+            {(authMember || authTable) ? (
               <Box className={"hover-line"}>
                 <NavLink to="/orders" activeClassName="underline">
                   Orders

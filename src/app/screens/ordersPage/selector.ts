@@ -8,6 +8,11 @@ export const retrievePausedOrders = createSelector(
   (ordersPage) => ordersPage.pausedOrders
 );
 
+export const retrievePendingOrders = createSelector(
+  selectHomePage,
+  (ordersPage) => ordersPage.pendingOrders
+);
+
 export const retrieveProcessOrders = createSelector(
   selectHomePage,
   (ordersPage) => ordersPage.processOrders

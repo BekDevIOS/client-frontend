@@ -3,7 +3,7 @@ import { Box, Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 import TabPanel from "@mui/lab/TabPanel";
 import moment from "moment";
-import { retrieveProcessOrders } from "./selector";
+import { retrievePendingOrders, retrieveProcessOrders } from "./selector";
 import { createSelector } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { Order, OrderItem, OrderUpdateInput } from "../../../lib/types/order";
@@ -17,6 +17,11 @@ import { T } from "../../../lib/types/common";
 
 /** REDUX SLICE & SELECTOR */
 
+const pendingOrdersRetriever = createSelector(
+  retrievePendingOrders,
+  (pendingOrders) => ({ pendingOrders })
+);
+
 const processOrdersRetriever = createSelector(
   retrieveProcessOrders,
   (processOrders) => ({ processOrders })
@@ -28,18 +33,40 @@ interface ProcessOrdersProps {
 
 export default function ProcessOrders(props: ProcessOrdersProps) {
   const { setValue } = props;
-  const { authMember, setOrderBulder } = useGlobals();
+  const { authMember, setOrderBulder, authTable } = useGlobals();
   const { processOrders } = useSelector(processOrdersRetriever);
+  const { pendingOrders } = useSelector(pendingOrdersRetriever);
 
   /** HANDLERS **/
-  const finishOrderHandler = async (e: T) => {
+  const deleteOrderHandler = async (e: T) => {
     try {
-      if (!authMember) throw new Error(Messages.error2);
-      
+      if (!authTable&&!authMember) throw new Error(Messages.error2);
       const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
-        orderStatus: OrderStatus.FINISH,
+        orderStatus: OrderStatus.CANCELLED,
+      };
+
+      const confirmation = window.confirm("Do you want to delete the order?");
+      if (confirmation) {
+        const order = new OrderService();
+        await order.updateOrder(input);
+        setOrderBulder(new Date());
+      }
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
+
+  const finishOrderHandler = async (e: T) => {
+    try {
+      if (!authMember) throw new Error(Messages.error2);
+
+      const orderId = e.target.value;
+      const input: OrderUpdateInput = {
+        orderId: orderId,
+        orderStatus: OrderStatus.COMPLETED,
       };
 
       const confirmation = window.confirm("Have you received your order?");
@@ -57,7 +84,7 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
   return (
     <TabPanel value="2">
       <Stack>
-        {processOrders?.map((order: Order) => {
+        {pendingOrders?.concat(processOrders).map((order: Order) => {
           return (
             <Box key={order._id} className="order-main-box">
               <Box className="order-box-scroll">
@@ -94,13 +121,30 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                   <p className="data-compl">
                     {moment().format("YY-MM-DD HH:mm")}
                   </p>
+
+                  <Button
+                    value={order._id}
+                    variant="contained"
+                    className="cancel-button"
+                    color={"secondary"}
+                    onClick={deleteOrderHandler}
+                    disabled={order.orderStatus !== OrderStatus.PENDING}
+                  >
+                    cancel
+                  </Button>
                   <Button
                     value={order._id}
                     variant="contained"
                     className="verify-button"
-                    onClick={finishOrderHandler}
+                    onClick={(e) => {
+                      if (authMember) {
+                        finishOrderHandler(e);
+                      } else {
+                        // TODO: Call waiter
+                      }
+                    }}
                   >
-                    Verify to Fulfil
+                    {authMember ? "Verify" : "Call"}
                   </Button>
                 </Box>
               </Box>

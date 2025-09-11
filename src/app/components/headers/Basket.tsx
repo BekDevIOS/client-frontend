@@ -23,7 +23,7 @@ interface BasketProps {
 
 export default function Basket(props: BasketProps) {
   const { cartItems, onAdd, onDelete, onDeleteAll, onRemove } = props;
-  const { authMember, setOrderBulder } = useGlobals();
+  const { authMember, setOrderBulder, authTable } = useGlobals();
   const history = useHistory();
   const itemsPrice = cartItems.reduce(
     (a: number, c: CartItem) => a + c.quantity * c.price,
@@ -46,7 +46,7 @@ export default function Basket(props: BasketProps) {
   const proceedOrderHandler = async () => {
     try {
       handleClose();
-      if (!authMember) throw new Error(Messages.error2);
+      if (!authMember&&!authTable) throw new Error(Messages.error2);
 
       const order = new OrderService();
       await order.createOrder(cartItems);

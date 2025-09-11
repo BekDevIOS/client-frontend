@@ -1,12 +1,17 @@
 import React from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import TabPanel from "@mui/lab/TabPanel";
 import { createSelector } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
-import { Order, OrderItem } from "../../../lib/types/order";
+import { Order, OrderItem, OrderUpdateInput } from "../../../lib/types/order";
 import { Product } from "../../../lib/types/product";
-import { serverApi } from "../../../lib/config";
+import { Messages, serverApi } from "../../../lib/config";
 import { retrieveFinishedOrders } from "./selector";
+import { useGlobals } from "../../hooks/useGlobals";
+import { T } from "../../../lib/types/common";
+import { OrderStatus } from "../../../lib/enums/order.enum";
+import OrderService from "../../services/OrderService";
+import { sweetErrorHandling } from "../../../lib/sweetAlert";
 
 /** REDUX SLICE & SELECTOR */
 
@@ -17,6 +22,33 @@ const finishedOrdersRetriever = createSelector(
 
 export default function FinishedOrders() {
   const { finishedOrders } = useSelector(finishedOrdersRetriever);
+  const { authTable, setOrderBulder } = useGlobals();
+
+  /** HANDLERS **/
+  const complatedOrderHandler = async (e: T) => {
+    try {
+      if (!authTable) throw new Error(Messages.error2);
+      //  PAYMENT PROCESS
+
+      const orderId = e.target.value;
+      const input: OrderUpdateInput = {
+        orderId: orderId,
+        orderStatus: OrderStatus.COMPLETED,
+      };
+
+      const confirmation = window.confirm(
+        "Do you want to complete with payment?"
+      );
+      if (confirmation) {
+        const order = new OrderService();
+        await order.updateOrder(input);
+        setOrderBulder(new Date());
+      }
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
+  };
   return (
     <TabPanel value="3">
       <Stack>
@@ -53,6 +85,16 @@ export default function FinishedOrders() {
                     <img src={"/icons/pause.svg"} />
                     <p>Total</p>
                     <p>${order.orderTotal}</p>
+                    {authTable && (
+                      <Button
+                        value={order._id}
+                        variant="contained"
+                        className="verify-button"
+                        onClick={complatedOrderHandler}
+                      >
+                        payment
+                      </Button>
+                    )}
                   </Box>
                 </Box>
               </Box>

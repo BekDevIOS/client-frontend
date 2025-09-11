@@ -27,7 +27,7 @@ interface PausedOrderProps {
 
 export default function PausedOrders(props: PausedOrderProps) {
   const { setValue } = props;
-  const { authMember, setOrderBulder } = useGlobals();
+  const { authMember, setOrderBulder, authTable } = useGlobals();
   const { pausedOrders } = useSelector(pausedOrdersRetriever);
 
   /** HANDLERS **/
@@ -37,7 +37,7 @@ export default function PausedOrders(props: PausedOrderProps) {
       const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
-        orderStatus: OrderStatus.DELETE,
+        orderStatus: OrderStatus.CANCELLED,
       };
 
       const confirmation = window.confirm("Do you want to delete the order?");
@@ -54,17 +54,19 @@ export default function PausedOrders(props: PausedOrderProps) {
 
   const processOrderHandler = async (e: T) => {
     try {
-      if (!authMember) throw new Error(Messages.error2);
+      if (!authMember && !authTable) throw new Error(Messages.error2);
       //  PAYMENT PROCESS
 
       const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
-        orderStatus: OrderStatus.PROCESS,
+        orderStatus: OrderStatus.PENDING,
       };
 
       const confirmation = window.confirm(
-        "Do you want to proceed with payment?"
+        authMember
+          ? "Do you want to proceed with payment?"
+          : "Do you want to proceed"
       );
       if (confirmation) {
         const order = new OrderService();
@@ -130,7 +132,7 @@ export default function PausedOrders(props: PausedOrderProps) {
                     className="verify-button"
                     onClick={processOrderHandler}
                   >
-                    payment
+                    {authMember ? "payment" : "order"}
                   </Button>
                 </Box>
               </Box>
