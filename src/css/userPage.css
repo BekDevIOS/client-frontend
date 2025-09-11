@@ -143,6 +143,16 @@
 	color: #a1a1a1;
 }
 
+.user-page .order-info-box .order-admin-prof {
+	cursor: pointer;
+	font-family: 'Commissioner';
+	font-style: normal;
+	font-weight: 900;
+	font-size: 20px;
+	line-height: 36px;
+	color: red;
+}
+
 .user-page .order-info-box .user-media-box {
 	margin-top: 10px;
 	width: 60%;

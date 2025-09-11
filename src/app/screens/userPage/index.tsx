@@ -14,6 +14,15 @@ export default function UserPage() {
   const history = useHistory();
   const { authMember } = useGlobals();
 
+  /** HANDLERS **/
+  const clickHandler = () => {
+    const confirmation = window.confirm("Do you want to Admin Panel");
+    if (confirmation) {
+      // ADMIN panel link
+      window.location.href = "http://localhost:3001";
+    }
+  };
+
   if (!authMember) history.push("/");
   return (
     <div className={"user-page"}>
@@ -57,8 +66,20 @@ export default function UserPage() {
                 <span className={"order-user-name"}>
                   {authMember?.memberNick}
                 </span>
-                <span className={"order-user-prof"}>
-                  {authMember?.memberType}
+                <span
+                  className={
+                    authMember?.memberType === MemberType.RESTAURANT
+                      ? "order-admin-prof"
+                      : "order-user-prof"
+                  }
+                  onClick={() => {
+                    authMember?.memberType === MemberType.RESTAURANT &&
+                      clickHandler();
+                  }}
+                >
+                  {authMember?.memberType === MemberType.RESTAURANT
+                    ? "ADMIN"
+                    : authMember?.memberType}
                 </span>
                 <span className={"order-user-prof"}>
                   {authMember?.memberAddress
