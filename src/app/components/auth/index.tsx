@@ -44,7 +44,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
   const [memberPassword, setMemberPassword] = useState<string>("");
-  const { setAuthMember } = useGlobals();
+  const { setAuthMember, setAuthTable } = useGlobals();
 
   const handleUsername = (e: T) => setMemberNick(e.target.value);
   const handlePhone = (e: T) => setMemberPhone(e.target.value);
@@ -68,6 +68,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const member = new MemberService();
       const result = await member.signup(signupInput);
       setAuthMember(result);
+      setAuthTable(null);
       setMemberPassword("");
       handleSignupClose();
     } catch (err) {
@@ -85,6 +86,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       const member = new MemberService();
       const result = await member.login(loginInput);
       setAuthMember(result);
+      setAuthTable(null);
       setMemberPassword("");
       handleLoginClose();
     } catch (err) {

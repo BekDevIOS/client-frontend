@@ -44,17 +44,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
     handleCloseLogout,
     handleLogoutClick,
   } = props;
-  const { authMember } = useGlobals();
+  const { authMember, authTable } = useGlobals();
 
   return (
     <div className="home-navbar">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="bg-video"
-      >
+      <video autoPlay loop muted playsInline className="bg-video">
         <source src="/video/navruz-hnb.mp4" type="video/mp4" />
       </video>
       <div className="bg-overlay"></div>
@@ -69,24 +63,36 @@ export default function HomeNavbar(props: HomeNavbarProps) {
           </Box>
           <Stack className="links">
             <Box className="hover-line">
-              <NavLink to="/" activeClassName="underline">Home</NavLink>
+              <NavLink to="/" activeClassName="underline">
+                Home
+              </NavLink>
             </Box>
             <Box className="hover-line">
-              <NavLink to="/products" activeClassName="underline">Products</NavLink>
+              <NavLink to="/products" activeClassName="underline">
+                Products
+              </NavLink>
             </Box>
             {authMember && (
               <Box className="hover-line">
-                <NavLink to="/orders" activeClassName="underline">Orders</NavLink>
+                <NavLink to="/orders" activeClassName="underline">
+                  Orders
+                </NavLink>
               </Box>
             )}
             {authMember && (
               <Box className="hover-line">
-                <NavLink to="/member-page" activeClassName="underline">My page</NavLink>
+                <NavLink to="/member-page" activeClassName="underline">
+                  My page
+                </NavLink>
               </Box>
             )}
-            <Box className="hover-line">
-              <NavLink to="/help" activeClassName="underline">Help</NavLink>
-            </Box>
+            {!authTable && (
+              <Box className="hover-line">
+                <NavLink to="/help" activeClassName="underline">
+                  Help
+                </NavLink>
+              </Box>
+            )}
 
             <Basket
               cartItems={cartItems}
@@ -96,7 +102,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
               onDeleteAll={onDeleteAll}
             />
 
-            {!authMember ? (
+            {!authMember && !authTable ? (
               <Box>
                 <Button
                   variant="contained"
@@ -112,7 +118,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 src={
                   authMember?.memberImage
                     ? `${serverApi}/${authMember?.memberImage}`
-                    : "/icons/default-user.svg"
+                    : authTable? "/img/table.jpg" : "/icons/default-user.svg"
                 }
                 aria-haspopup="true"
                 onClick={handleLogoutOpen}
@@ -168,10 +174,12 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         <Stack className="header-frame">
           <Stack className="detail">
             <Box className="head-main-txt">World's Most Delicious Cuisine</Box>
-            <Box className="wel-txt">A Taste of Tradition, A Touch of Elegance</Box>
+            <Box className="wel-txt">
+              A Taste of Tradition, A Touch of Elegance
+            </Box>
             <Box className="service-txt">Open 24/7</Box>
             <Box className="signup">
-              {!authMember ? (
+              {!authMember && !authTable ? (
                 <Button
                   variant="contained"
                   className="signup-button"

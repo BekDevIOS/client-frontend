@@ -18,10 +18,12 @@ import "../css/app.css";
 import "../css/navbar.css";
 import "../css/footer.css";
 import QrLanding from "./components/qrLanding";
+import TableService from "./services/TableService";
+import { TableStatus } from "../lib/enums/table.enum";
 
 export default function App() {
   const location = useLocation();
-  const { setAuthMember } = useGlobals();
+  const { setAuthMember, authMember, authTable, setAuthTable } = useGlobals();
   const { cartItems, onAdd, onRemove, onDelete, onDeleteAll } = useBasket();
   const [signupOpen, setSignupOpen] = useState<boolean>(false);
   const [loginOpen, setLoginOpen] = useState<boolean>(false);
@@ -43,9 +45,16 @@ export default function App() {
   const handleLogoutRequest = async () => {
     try {
       const member = new MemberService();
-      await member.logout();
+      const table = new TableService();
+      authTable
+        ? await table.updateChosenTable(authTable._id, {
+            _id: authTable._id,
+            tableStatus: TableStatus.CLEANING,
+          })
+        : await member.logout();
 
       await sweetTopSuccessAlert("success", 700);
+      setAuthTable(null);
       setAuthMember(null);
     } catch (err) {
       console.log(err);

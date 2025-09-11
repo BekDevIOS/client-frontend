@@ -47,6 +47,7 @@ class MemberService {
       const member: Member = result.data.member;
       console.log("member:", member);
       localStorage.setItem("memberData", JSON.stringify(member));
+      localStorage.removeItem("tableData");
       return member;
     } catch (err) {
       console.log("Error, signup:", err);
@@ -63,6 +64,7 @@ class MemberService {
       const member: Member = result.data.member;
       console.log("member:", member);
       localStorage.setItem("memberData", JSON.stringify(member));
+      localStorage.removeItem("tableData");
       return member;
     } catch (err) {
       console.log("Error, login:", err);

@@ -14,6 +14,7 @@ import { faq } from "../../../lib/data/faq";
 import { terms } from "../../../lib/data/terms";
 
 export default function HelpPage() {
+
   const [value, setValue] = React.useState("1");
 
   /** HANDLERS **/

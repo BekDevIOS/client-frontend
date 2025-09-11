@@ -5,7 +5,7 @@ import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 
 export default function QrLanding() {
-  const { setAuthTable } = useGlobals();
+  const { setAuthTable, setAuthMember } = useGlobals();
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
 
@@ -15,6 +15,7 @@ export default function QrLanding() {
       .qrLanding(id)
       .then((data) => {
         setAuthTable(data);
+        setAuthMember(null)
         history.push("/products");
       })
       .catch((err) => {

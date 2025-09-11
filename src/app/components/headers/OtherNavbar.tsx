@@ -44,7 +44,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
     handleCloseLogout,
     handleLogoutClick,
   } = props;
-  const { authMember } = useGlobals();
+  const { authMember, authTable } = useGlobals();
   return (
     <div className="other-navbar">
       <Container className="navbar-container">
@@ -77,11 +77,13 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 </NavLink>
               </Box>
             ) : null}
-            <Box className={"hover-line"}>
-              <NavLink to="/help" activeClassName="underline">
-                Help
-              </NavLink>
-            </Box>
+            {!authTable && (
+              <Box className="hover-line">
+                <NavLink to="/help" activeClassName="underline">
+                  Help
+                </NavLink>
+              </Box>
+            )}
 
             <Basket
               cartItems={cartItems}
@@ -91,7 +93,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
               onDeleteAll={onDeleteAll}
             />
 
-            {!authMember ? (
+            {!authMember && !authTable ? (
               <Box>
                 <Button
                   variant="contained"
@@ -107,6 +109,8 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 src={
                   authMember?.memberImage
                     ? `${serverApi}/${authMember?.memberImage}`
+                    : authTable
+                    ? "/img/table.jpg"
                     : "/icons/default-user.svg"
                 }
                 aria-haspopup={"true"}
@@ -157,9 +161,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
           </Stack>
         </Stack>
         <Stack className="header-frame">
-          <Stack className="detail">
-          
-          </Stack>
+          <Stack className="detail"></Stack>
         </Stack>
       </Container>
     </div>
