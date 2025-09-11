@@ -16,7 +16,7 @@ export default function UserPage() {
 
   /** HANDLERS **/
   const clickHandler = () => {
-    const confirmation = window.confirm("Do you want to Admin Panel");
+    const confirmation = window.confirm("Do you want to go Admin Panel");
     if (confirmation) {
       // ADMIN panel link
       window.location.href = "http://localhost:3001";

@@ -1,9 +1,11 @@
-import { OrderStatus } from "../enums/order.enum";
+
+
+import { OrderStatus, OrderType, PaymentMethod, PaymentStatus } from "../enums/order.enum";
 import { Product } from "./product";
 
-export interface OrderItem{
+export interface OrderItem {
   _id: string;
-  itemQuantity:number;
+  itemQuantity: number;
   itemPrice: number;
   orderId: string;
   productId: string;
@@ -11,12 +13,17 @@ export interface OrderItem{
   updatedAt: Date;
 }
 
-export interface Order{
+export interface Order {
   _id: string;
+  orderType: OrderType;
+  orderStatus: OrderStatus;
   orderTotal: number;
   orderDelivery: number;
-  orderStatus: OrderStatus;
-  memberId: string;
+  tableId: string | null;
+  memberId: string | null;
+  orderNote: string;
+  paymentStatus: PaymentStatus;
+  paymentMethod: PaymentMethod;
   createdAt: Date;
   updatedAt: Date;
   /** from aggregations */
@@ -31,13 +38,23 @@ export interface OrderItemInput {
   orderId?: string;
 }
 
-export interface OrderInquiry{
-  page: number;
-  limit: number;
-  orderStatus: OrderStatus;
+export interface OrderUpdateInput {
+  orderId: string;
+  orderStatus?: OrderStatus;
+  paymentStatus?: PaymentStatus;
+  paymentMethod?: PaymentMethod;
 }
 
-export interface OrderUpdateInput{
-  orderId: string;
-  orderStatus: OrderStatus;
+export interface OrderInquiry {
+  page: number;
+  limit: number;
+  type?: OrderType;
+  status?: OrderStatus;
+  payStatus?: PaymentStatus;
+  payMeth?: PaymentMethod;
+  search?: string;
+  orderStatus?: OrderStatus;
 }
+
+
+

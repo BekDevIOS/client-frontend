@@ -9,7 +9,7 @@ import { Order, OrderItem, OrderUpdateInput } from "../../../lib/types/order";
 import { Product } from "../../../lib/types/product";
 import { Messages, serverApi } from "../../../lib/config";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
-import { OrderStatus } from "../../../lib/enums/order.enum";
+import { OrderStatus, PaymentStatus } from "../../../lib/enums/order.enum";
 import { useGlobals } from "../../hooks/useGlobals";
 import OrderService from "../../services/OrderService";
 import { T } from "../../../lib/types/common";
@@ -33,7 +33,7 @@ export default function PausedOrders(props: PausedOrderProps) {
   /** HANDLERS **/
   const deleteOrderHandler = async (e: T) => {
     try {
-      if (!authMember) throw new Error(Messages.error2);
+      if (!authTable) throw new Error(Messages.error2);
       const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
@@ -62,11 +62,12 @@ export default function PausedOrders(props: PausedOrderProps) {
         orderId: orderId,
         orderStatus: OrderStatus.PENDING,
       };
+      if (authMember) input.paymentStatus = PaymentStatus.PAID;
 
       const confirmation = window.confirm(
         authMember
           ? "Do you want to proceed with payment?"
-          : "Do you want to proceed"
+          : "Do you want to order?"
       );
       if (confirmation) {
         const order = new OrderService();

@@ -33,13 +33,18 @@ const actionDispatch = (dispatch: Dispatch) => ({
   setFinishedOrders: (data: Order[]) => dispatch(setFinishedOrders(data)),
 });
 
-export default function OrdersPage() {
+interface OrdersPageProps {
+  callHandler: (id: string) => void;
+}
+
+export default function OrdersPage(props: OrdersPageProps) {
   const {
     setFinishedOrders,
     setPausedOrders,
     setProcessOrders,
     setPendingOrders,
   } = actionDispatch(useDispatch());
+  const { callHandler } = props;
   const { orderBulder, authMember, authTable } = useGlobals();
   const history = useHistory();
   const [value, setValue] = useState("1");
@@ -110,7 +115,7 @@ export default function OrdersPage() {
             </Box>
             <Stack className="order-main-content">
               <PausedOrders setValue={setValue} />
-              <ProcessOrders setValue={setValue} />
+              <ProcessOrders setValue={setValue} callHandler={callHandler} />
               <FinishedOrders />
             </Stack>
           </TabContext>

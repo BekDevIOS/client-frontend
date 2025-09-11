@@ -19,9 +19,7 @@ import "../css/navbar.css";
 import "../css/footer.css";
 import QrLanding from "./components/qrLanding";
 import TableService from "./services/TableService";
-import { TableCall, TableStatus } from "../lib/enums/table.enum";
 import CallButton from "./components/callWaiter";
-import { TableUpdateInput } from "../lib/types/table";
 
 export default function App() {
   const location = useLocation();
@@ -48,12 +46,7 @@ export default function App() {
     try {
       const member = new MemberService();
       const table = new TableService();
-      authTable
-        ? await table.updateChosenTable(authTable._id, {
-            _id: authTable._id,
-            tableStatus: TableStatus.CLEANING,
-          })
-        : await member.logout();
+      authTable ? await table.tableLogout() : await member.logout();
 
       await sweetTopSuccessAlert("success", 700);
       setAuthTable(null);
@@ -71,11 +64,11 @@ export default function App() {
     await handleLogoutRequest();
   };
 
-  const callHandler = async (id: string, input: TableUpdateInput) => {
+  const callHandler = async (id: string) => {
     const table = new TableService();
     try {
       if (!authTable) throw new Error(Messages.error6);
-      const result = await table.updateChosenTable(id, input);
+      const result = await table.clickTableCall(id);
       sweetTopSuccessAlert("The waiter is coming!", 700);
     } catch (err) {
       console.log(err);
@@ -119,7 +112,7 @@ export default function App() {
           <ProductsPage onAdd={onAdd} />
         </Route>
         <Route path="/orders">
-          <OrdersPage />
+          <OrdersPage callHandler={callHandler} />
         </Route>
         <Route path="/member-page">
           <UserPage />

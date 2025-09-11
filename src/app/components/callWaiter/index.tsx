@@ -6,7 +6,7 @@ import { TableUpdateInput } from "../../../lib/types/table";
 import { TableCall } from "../../../lib/enums/table.enum";
 
 interface CallButtonPorps {
-  callHandler: (id: string, input: TableUpdateInput) => void;
+  callHandler: (id: string) => void;
 }
 
 export default function CallButton(props: CallButtonPorps) {
@@ -19,10 +19,7 @@ export default function CallButton(props: CallButtonPorps) {
       aria-label="call-waiter"
       onClick={() => {
         if (authTable)
-          callHandler(authTable?._id, {
-            _id: authTable?._id,
-            tableCall: TableCall.ACTIVE,
-          });
+          callHandler(authTable?._id as string);
       }}
       sx={{
         display: "flex",

@@ -29,10 +29,11 @@ const processOrdersRetriever = createSelector(
 
 interface ProcessOrdersProps {
   setValue: (input: string) => void;
+  callHandler: (id: string) => void;
 }
 
 export default function ProcessOrders(props: ProcessOrdersProps) {
-  const { setValue } = props;
+  const { setValue, callHandler } = props;
   const { authMember, setOrderBulder, authTable } = useGlobals();
   const { processOrders } = useSelector(processOrdersRetriever);
   const { pendingOrders } = useSelector(pendingOrdersRetriever);
@@ -40,7 +41,7 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
   /** HANDLERS **/
   const deleteOrderHandler = async (e: T) => {
     try {
-      if (!authTable&&!authMember) throw new Error(Messages.error2);
+      if (!authTable && !authMember) throw new Error(Messages.error2);
       const orderId = e.target.value;
       const input: OrderUpdateInput = {
         orderId: orderId,
@@ -139,8 +140,8 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
                     onClick={(e) => {
                       if (authMember) {
                         finishOrderHandler(e);
-                      } else {
-                        // TODO: Call waiter
+                      } else if (authTable) {
+                        callHandler(authTable._id);
                       }
                     }}
                   >
@@ -152,20 +153,19 @@ export default function ProcessOrders(props: ProcessOrdersProps) {
           );
         })}
 
-        {!processOrders ||
-          (processOrders.length === 0 && (
-            <Box
-              width={"800px"}
-              display="flex"
-              flexDirection="row"
-              justifyContent="center"
-            >
-              <img
-                src={"/icons/noimage-list.svg"}
-                style={{ width: 400, height: 400 }}
-              />
-            </Box>
-          ))}
+        {pendingOrders?.concat(processOrders)?.length === 0 && (
+          <Box
+            width={"800px"}
+            display="flex"
+            flexDirection="row"
+            justifyContent="center"
+          >
+            <img
+              src={"/icons/noimage-list.svg"}
+              style={{ width: 400, height: 400 }}
+            />
+          </Box>
+        )}
       </Stack>
     </TabPanel>
   );

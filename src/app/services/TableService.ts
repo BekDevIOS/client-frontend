@@ -24,17 +24,25 @@ class TableService {
     }
   }
 
-  public async updateChosenTable(
-    id: string,
-    input: TableUpdateInput
-  ): Promise<void> {
+  public async tableLogout(): Promise<void> {
     try {
-      const url = this.path + `/admin/table/${id}`;
-      const result = await axios.post(url, input, { withCredentials: true });
-      console.log("updateChosenTable:", result);
+      const url = this.path + `/table/logout`;
+      const result = await axios.post(url, {}, { withCredentials: true });
+      console.log("tableLogout:", result);
       localStorage.removeItem("tableData");
     } catch (err) {
-      console.log("Error, updateChosenTable:", err);
+      console.log("Error, tableLogout:", err);
+      throw err;
+    }
+  }
+
+  public async clickTableCall(id: string): Promise<void> {
+    try {
+      const url = this.path + `/table/call/${id}`;
+      const result = await axios.get(url, { withCredentials: true });
+      console.log("clickTableCall:", result);
+    } catch (err) {
+      console.log("Error, clickTableCall:", err);
       throw err;
     }
   }

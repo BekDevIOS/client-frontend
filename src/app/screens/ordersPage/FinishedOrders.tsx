@@ -9,7 +9,7 @@ import { Messages, serverApi } from "../../../lib/config";
 import { retrieveFinishedOrders } from "./selector";
 import { useGlobals } from "../../hooks/useGlobals";
 import { T } from "../../../lib/types/common";
-import { OrderStatus } from "../../../lib/enums/order.enum";
+import { OrderStatus, PaymentStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 
@@ -34,6 +34,7 @@ export default function FinishedOrders() {
       const input: OrderUpdateInput = {
         orderId: orderId,
         orderStatus: OrderStatus.COMPLETED,
+        paymentStatus: PaymentStatus.PAID,
       };
 
       const confirmation = window.confirm(
