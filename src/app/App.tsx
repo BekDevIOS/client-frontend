@@ -19,7 +19,9 @@ import "../css/navbar.css";
 import "../css/footer.css";
 import QrLanding from "./components/qrLanding";
 import TableService from "./services/TableService";
-import { TableStatus } from "../lib/enums/table.enum";
+import { TableCall, TableStatus } from "../lib/enums/table.enum";
+import CallButton from "./components/callWaiter";
+import { TableUpdateInput } from "../lib/types/table";
 
 export default function App() {
   const location = useLocation();
@@ -67,6 +69,18 @@ export default function App() {
     handleCloseLogout();
     await Promise.resolve();
     await handleLogoutRequest();
+  };
+
+  const callHandler = async (id: string, input: TableUpdateInput) => {
+    const table = new TableService();
+    try {
+      if (!authTable) throw new Error(Messages.error6);
+      const result = await table.updateChosenTable(id, input);
+      sweetTopSuccessAlert("The waiter is coming!", 700);
+    } catch (err) {
+      console.log(err);
+      sweetErrorHandling(err).then();
+    }
   };
 
   return (
@@ -121,6 +135,7 @@ export default function App() {
         </Route>
       </Switch>
       <Footer />
+      {authTable && <CallButton callHandler={callHandler} />}
 
       <AuthenticationModal
         signupOpen={signupOpen}
