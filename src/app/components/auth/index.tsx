@@ -6,6 +6,8 @@ import {
   Fab,
   Stack,
   TextField,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
@@ -15,6 +17,8 @@ import { LoginInput, MemberInput } from "../../../lib/types/member";
 import MemberService from "../../services/MemberService";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
+import { useHistory } from "react-router-dom";
+import { MemberType } from "../../../lib/enums/member.enum";
 
 const ModalImg = styled.img`
   width: 62%;
@@ -41,9 +45,11 @@ interface AuthenticationModalProps {
 
 export default function AuthenticationModal(props: AuthenticationModalProps) {
   const { signupOpen, loginOpen, handleSignupClose, handleLoginClose } = props;
+  const history = useHistory();
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
   const [memberPassword, setMemberPassword] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { setAuthMember, setAuthTable } = useGlobals();
 
   const handleUsername = (e: T) => setMemberNick(e.target.value);
@@ -64,6 +70,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
         memberNick,
         memberPassword,
         memberPhone,
+        memberType: isAdmin ? MemberType.RESTAURANT : MemberType.USER,
       };
       const member = new MemberService();
       const result = await member.signup(signupInput);
@@ -71,6 +78,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       setAuthTable(null);
       setMemberPassword("");
       handleSignupClose();
+      history.push("/member-page");
     } catch (err) {
       handleSignupClose();
       sweetErrorHandling(err);
@@ -89,6 +97,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       setAuthTable(null);
       setMemberPassword("");
       handleLoginClose();
+      history.push("/member-page");
     } catch (err) {
       handleLoginClose();
       sweetErrorHandling(err);
@@ -114,9 +123,13 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
       >
         <DialogContent sx={{ p: 0 }}>
           <Stack direction="row">
+            {/* LEFT SIDE IMAGE */}
             <ModalImg src={"/img/auth.webp"} alt="camera" />
+
+            {/* RIGHT SIDE FORM */}
             <Stack sx={{ ml: "69px", alignItems: "center" }}>
               <h2>Signup Form</h2>
+
               <TextField
                 sx={{ mt: "7px" }}
                 id="signup-username"
@@ -124,6 +137,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 variant="outlined"
                 onChange={handleUsername}
               />
+
               <TextField
                 sx={{ my: "17px" }}
                 id="signup-phone"
@@ -131,13 +145,30 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 variant="outlined"
                 onChange={handlePhone}
               />
+
               <TextField
                 id="signup-password"
                 label="password"
+                type="password"
                 variant="outlined"
                 onChange={handlePassword}
                 onKeyDown={handlePasswordKeyDown}
               />
+
+              {/* ✅ Checklist for Admin */}
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isAdmin}
+                    onChange={(e) => setIsAdmin(e.target.checked)}
+                    name="isAdmin"
+                    color="primary"
+                  />
+                }
+                label="Sign up as Admin"
+                sx={{ mt: 2 }}
+              />
+
               <Fab
                 sx={{ mt: "30px", width: "120px" }}
                 variant="extended"
