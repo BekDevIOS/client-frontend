@@ -548,3 +548,97 @@
   }
 }
 
+/* ============================================
+   MOBILE CALL WAITER BUTTON
+   ============================================ */
+
+.mobile-call-waiter-btn {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  width: 70px !important;
+  height: 70px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 999 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.mobile-call-waiter-btn:active {
+  transform: scale(0.95) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+}
+
+.mobile-call-waiter-icon {
+  height: 32px !important;
+  width: 32px !important;
+  margin-bottom: 2px !important;
+}
+
+.mobile-call-waiter-text {
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-top: 2px !important;
+}
+
+/* Responsive adjustments for call waiter button */
+@media (max-width: 480px) {
+  .mobile-call-waiter-btn {
+    width: 65px !important;
+    height: 65px !important;
+    bottom: 16px !important;
+    right: 16px !important;
+  }
+
+  .mobile-call-waiter-icon {
+    height: 28px !important;
+    width: 28px !important;
+  }
+
+  .mobile-call-waiter-text {
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .mobile-call-waiter-btn {
+    width: 60px !important;
+    height: 60px !important;
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+
+  .mobile-call-waiter-icon {
+    height: 26px !important;
+    width: 26px !important;
+  }
+
+  .mobile-call-waiter-text {
+    font-size: 9px !important;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobile-call-waiter-btn {
+    width: 60px !important;
+    height: 60px !important;
+    bottom: 10px !important;
+    right: 10px !important;
+  }
+
+  .mobile-call-waiter-icon {
+    height: 24px !important;
+    width: 24px !important;
+  }
+
+  .mobile-call-waiter-text {
+    font-size: 9px !important;
+  }
+}
+

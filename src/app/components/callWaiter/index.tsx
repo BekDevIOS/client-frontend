@@ -4,6 +4,8 @@ import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { useGlobals } from "../../hooks/useGlobals";
 import { TableUpdateInput } from "../../../lib/types/table";
 import { TableCall } from "../../../lib/enums/table.enum";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
+import "../../../css/mobile/navbar.css";
 
 interface CallButtonPorps {
   callHandler: (id: string) => void;
@@ -12,6 +14,24 @@ interface CallButtonPorps {
 export default function CallButton(props: CallButtonPorps) {
   const { callHandler } = props;
   const { authTable } = useGlobals();
+  const device = useDeviceDetect();
+
+  if (device === "mobile") {
+    return (
+      <Fab
+        color="secondary"
+        aria-label="call-waiter"
+        onClick={() => {
+          if (authTable)
+            callHandler(authTable?._id as string);
+        }}
+        className="mobile-call-waiter-btn"
+      >
+        <SupportAgentIcon className="mobile-call-waiter-icon" />
+        <span className="mobile-call-waiter-text">call</span>
+      </Fab>
+    );
+  }
 
   return (
     <Fab
