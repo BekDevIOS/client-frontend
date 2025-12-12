@@ -9,11 +9,12 @@ import { useHistory } from "react-router-dom";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import { MemberType } from "../../../lib/enums/member.enum";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 export default function UserPage() {
   const history = useHistory();
-  const { authMember } = useGlobals();
-
+  const { authMember, authTable } = useGlobals();
+  const device = useDeviceDetect();
   /** HANDLERS **/
   const clickHandler = () => {
     const confirmation = window.confirm("Do you want to go Admin Panel");
@@ -23,85 +24,96 @@ export default function UserPage() {
     }
   };
 
-  if (!authMember) history.push("/");
-  return (
-    <div className={"user-page"}>
-      <Container>
-        <Stack className={"my-page-frame"}>
-          <Stack className={"my-page-left"}>
-            <Box display={"flex"} flexDirection={"column"}>
-              <Box className={"menu-name"}>Modify Member Details</Box>
-              <Box className={"menu-content"}>
-                <Settings />
-              </Box>
-            </Box>
-          </Stack>
+  // Redirect authTable to products page (authTable cannot access user page)
+  if (authTable) {
+    history.push("/products");
+    return null;
+  }
 
-          <Stack className={"my-page-right"}>
-            <Box className={"order-info-box"}>
-              <Box
-                display={"flex"}
-                flexDirection={"column"}
-                alignItems={"center"}
-              >
-                <div className={"order-user-img"}>
-                  <img
-                    src={
-                      authMember?.memberImage
-                        ? `${serverApi}/${authMember.memberImage}`
-                        : "/icons/default-user.svg"
-                    }
-                    className={"order-user-avatar"}
-                  />
-                  <div className={"order-user-icon-box"}>
+  if (!authMember) history.push("/");
+
+  if (device === "mobile") {
+    return <div>Mobile User Page</div>;
+  } else {
+    return (
+      <div className={"user-page"}>
+        <Container>
+          <Stack className={"my-page-frame"}>
+            <Stack className={"my-page-left"}>
+              <Box display={"flex"} flexDirection={"column"}>
+                <Box className={"menu-name"}>Modify Member Details</Box>
+                <Box className={"menu-content"}>
+                  <Settings />
+                </Box>
+              </Box>
+            </Stack>
+
+            <Stack className={"my-page-right"}>
+              <Box className={"order-info-box"}>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  alignItems={"center"}
+                >
+                  <div className={"order-user-img"}>
                     <img
                       src={
-                        authMember?.memberType === MemberType.RESTAURANT
-                          ? "/icons/restaurant.svg"
-                          : "/icons/user-badge.svg"
+                        authMember?.memberImage
+                          ? `${serverApi}/${authMember.memberImage}`
+                          : "/icons/default-user.svg"
                       }
+                      className={"order-user-avatar"}
                     />
+                    <div className={"order-user-icon-box"}>
+                      <img
+                        src={
+                          authMember?.memberType === MemberType.RESTAURANT
+                            ? "/icons/restaurant.svg"
+                            : "/icons/user-badge.svg"
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-                <span className={"order-user-name"}>
-                  {authMember?.memberNick}
-                </span>
-                <span
-                  className={
-                    authMember?.memberType === MemberType.RESTAURANT
-                      ? "order-admin-prof"
-                      : "order-user-prof"
-                  }
-                  onClick={() => {
-                    authMember?.memberType === MemberType.RESTAURANT &&
-                      clickHandler();
-                  }}
-                >
-                  {authMember?.memberType === MemberType.RESTAURANT
-                    ? "ADMIN"
-                    : authMember?.memberType}
-                </span>
-                <span className={"order-user-prof"}>
-                  {authMember?.memberAddress
-                    ? authMember.memberAddress
-                    : "no address"}
-                </span>
+                  <span className={"order-user-name"}>
+                    {authMember?.memberNick}
+                  </span>
+                  <span
+                    className={
+                      authMember?.memberType === MemberType.RESTAURANT
+                        ? "order-admin-prof"
+                        : "order-user-prof"
+                    }
+                    onClick={() => {
+                      authMember?.memberType === MemberType.RESTAURANT &&
+                        clickHandler();
+                    }}
+                  >
+                    {authMember?.memberType === MemberType.RESTAURANT
+                      ? "ADMIN"
+                      : authMember?.memberType}
+                  </span>
+                  <span className={"order-user-prof"}>
+                    {authMember?.memberAddress
+                      ? authMember.memberAddress
+                      : "no address"}
+                  </span>
+                </Box>
+                <Box className={"user-media-box"}>
+                  <FacebookIcon />
+                  <InstagramIcon />
+                  <TelegramIcon />
+                  <YouTubeIcon />
+                </Box>
+                <p className={"user-desc"}>
+                  {authMember?.memberDesc
+                    ? authMember.memberDesc
+                    : "no description"}
+                </p>
               </Box>
-              <Box className={"user-media-box"}>
-                <FacebookIcon />
-                <InstagramIcon />
-                <TelegramIcon />
-                <YouTubeIcon />
-              </Box>
-              <p className={"user-desc"}>
-                {authMember?.memberDesc
-                  ? authMember.memberDesc
-                  : "no description"}
-              </p>
-            </Box>
+            </Stack>
           </Stack>
-        </Stack>
-      </Container>
-    </div>
-  );
+        </Container>
+      </div>
+    );
+  }
 }

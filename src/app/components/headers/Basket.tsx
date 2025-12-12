@@ -1,17 +1,20 @@
 import React from "react";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, Drawer } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Badge from "@mui/material/Badge";
 import Menu from "@mui/material/Menu";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CancelIcon from "@mui/icons-material/Cancel";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CloseIcon from "@mui/icons-material/Close";
 import { useHistory } from "react-router-dom";
 import { CartItem } from "../../../lib/types/search";
 import { Messages, serverApi } from "../../../lib/config";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
 import { useGlobals } from "../../hooks/useGlobals";
 import OrderService from "../../services/OrderService";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
+import "../../../css/mobile/navbar.css";
 
 interface BasketProps {
   cartItems: CartItem[];
@@ -31,7 +34,7 @@ export default function Basket(props: BasketProps) {
   );
   const shippingCost: number = itemsPrice < 100 ? 5 : 0;
   const totalPrice = (itemsPrice + shippingCost).toFixed(1);
-
+  const device = useDeviceDetect();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -61,6 +64,131 @@ export default function Basket(props: BasketProps) {
     }
   };
 
+  if(device === "mobile") {
+    return (
+      <Box className={"hover-line mobile-basket"}>
+        <IconButton
+          aria-label="cart"
+          onClick={handleClick}
+          sx={{ color: "#f8f8ff" }}
+        >
+          <Badge badgeContent={cartItems.length} color="secondary">
+            <img src={"/icons/shopping-cart.svg"} alt="Cart" />
+          </Badge>
+        </IconButton>
+        <Drawer
+          anchor="bottom"
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            className: "mobile-basket-drawer",
+            sx: {
+              maxHeight: "70vh",
+              borderTopLeftRadius: "16px",
+              borderTopRightRadius: "16px",
+            },
+          }}
+        >
+          <Stack className={"mobile-basket-frame"}>
+            {/* Header */}
+            <Box className={"mobile-basket-header"}>
+              <Box className={"mobile-basket-title"}>
+                {cartItems.length === 0 ? (
+                  <span>Cart is empty!</span>
+                ) : (
+                  <Stack direction="row" alignItems="center" spacing={1}>
+                    <span>Cart Products ({cartItems.length})</span>
+                    {cartItems.length > 0 && (
+                      <DeleteForeverIcon
+                        sx={{ cursor: "pointer", fontSize: "20px" }}
+                        onClick={onDeleteAll}
+                        color={"primary"}
+                      />
+                    )}
+                  </Stack>
+                )}
+              </Box>
+              <IconButton
+                onClick={handleClose}
+                sx={{ padding: "4px" }}
+                className="mobile-basket-close"
+              >
+                <CloseIcon />
+              </IconButton>
+            </Box>
+
+            {/* Cart Items */}
+            <Box className={"mobile-basket-items-wrapper"}>
+              {cartItems.length === 0 ? (
+                <Box className={"mobile-basket-empty"}>
+                  <ShoppingCartIcon sx={{ fontSize: 64, color: "#ccc", marginBottom: "16px" }} />
+                  <span>Your cart is empty</span>
+                </Box>
+              ) : (
+                <Box className={"mobile-basket-items"}>
+                  {cartItems.map((item: CartItem) => {
+                    const imagePath = `${serverApi}/${item.image}`;
+                    return (
+                      <Box className={"mobile-basket-item"} key={item._id}>
+                        <img src={imagePath} className={"mobile-product-img"} alt={item.name} />
+                        <Box className={"mobile-product-info"}>
+                          <span className={"mobile-product-name"}>{item.name}</span>
+                          <span className={"mobile-product-price"}>
+                            ${item.price} x {item.quantity}
+                          </span>
+                        </Box>
+                        <Box className={"mobile-product-actions"}>
+                          <IconButton
+                            size="small"
+                            onClick={() => onDelete(item)}
+                            sx={{ padding: "4px", marginBottom: "4px" }}
+                          >
+                            <CancelIcon fontSize="small" color="primary" />
+                          </IconButton>
+                          <Box className="mobile-quantity-controls">
+                            <button
+                              onClick={() => onRemove(item)}
+                              className="mobile-quantity-btn mobile-quantity-minus"
+                            >
+                              -
+                            </button>
+                            <span className="mobile-quantity-value">{item.quantity}</span>
+                            <button
+                              onClick={() => onAdd(item)}
+                              className="mobile-quantity-btn mobile-quantity-plus"
+                            >
+                              +
+                            </button>
+                          </Box>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              )}
+            </Box>
+
+            {/* Footer with Total and Order Button */}
+            {cartItems.length !== 0 && (
+              <Box className={"mobile-basket-footer"}>
+                <span className={"mobile-basket-total"}>
+                  Total: ${totalPrice}
+                </span>
+                <Button
+                  startIcon={<ShoppingCartIcon />}
+                  variant={"contained"}
+                  onClick={proceedOrderHandler}
+                  className="mobile-order-button"
+                >
+                  Order
+                </Button>
+              </Box>
+            )}
+          </Stack>
+        </Drawer>
+      </Box>
+    );
+  } else {
   return (
     <Box className={"hover-line"}>
       <IconButton
@@ -180,5 +308,6 @@ export default function Basket(props: BasketProps) {
         </Stack>
       </Menu>
     </Box>
-  );
+    );
+  }
 }

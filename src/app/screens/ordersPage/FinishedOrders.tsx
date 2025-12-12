@@ -12,6 +12,9 @@ import { T } from "../../../lib/types/common";
 import { OrderStatus, PaymentStatus } from "../../../lib/enums/order.enum";
 import OrderService from "../../services/OrderService";
 import { sweetErrorHandling } from "../../../lib/sweetAlert";
+import { Typography } from "@mui/material";
+import PaymentIcon from "@mui/icons-material/Payment";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 /** REDUX SLICE & SELECTOR */
 
@@ -23,6 +26,7 @@ const finishedOrdersRetriever = createSelector(
 export default function FinishedOrders() {
   const { finishedOrders } = useSelector(finishedOrdersRetriever);
   const { authTable, setOrderBulder } = useGlobals();
+  const device = useDeviceDetect();
 
   /** HANDLERS **/
   const complatedOrderHandler = async (e: T) => {
@@ -50,6 +54,89 @@ export default function FinishedOrders() {
       sweetErrorHandling(err).then();
     }
   };
+  if (device === "mobile") {
+    return (
+      <TabPanel value="3">
+        <Box className="mobile-orders-list">
+          {finishedOrders && finishedOrders.length > 0 ? (
+            finishedOrders.map((order: Order) => (
+              <Box key={order._id} className="mobile-order-card mobile-order-finished">
+                {/* Order Items */}
+                <Box className="mobile-order-items">
+                  {order.orderItems?.map((item: OrderItem) => {
+                    const product: Product = order.productData.filter(
+                      (ele: Product) => item.productId === ele._id
+                    )[0];
+                    if (!product) return null;
+                    const imagePath = `${serverApi}/${product.productImages[0]}`;
+                    return (
+                      <Box key={item._id} className="mobile-order-item">
+                        <img src={imagePath} className="mobile-order-item-img" alt={product.productName} />
+                        <Box className="mobile-order-item-info">
+                          <Typography className="mobile-order-item-name">
+                            {product.productName}
+                          </Typography>
+                          <Box className="mobile-order-item-price-row">
+                            <Typography className="mobile-order-item-price">
+                              ${item.itemPrice}
+                            </Typography>
+                            <Typography className="mobile-order-item-quantity">
+                              x {item.itemQuantity}
+                            </Typography>
+                            <Typography className="mobile-order-item-total">
+                              ${(item.itemQuantity * item.itemPrice).toFixed(2)}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+
+                {/* Order Summary */}
+                <Box className="mobile-order-summary">
+                  <Box className="mobile-order-summary-row">
+                    <Typography>Product price</Typography>
+                    <Typography>${(order.orderTotal - order.orderDelivery).toFixed(2)}</Typography>
+                  </Box>
+                  <Box className="mobile-order-summary-row">
+                    <Typography>Delivery cost</Typography>
+                    <Typography>${order.orderDelivery.toFixed(2)}</Typography>
+                  </Box>
+                  <Box className="mobile-order-summary-total">
+                    <Typography>Total</Typography>
+                    <Typography>${order.orderTotal.toFixed(2)}</Typography>
+                  </Box>
+                </Box>
+
+                {/* Payment Button (only for table) */}
+                {authTable && (
+                  <Box className="mobile-order-actions">
+                    <Button
+                      value={order._id}
+                      variant="contained"
+                      className="mobile-order-payment-btn"
+                      startIcon={<PaymentIcon />}
+                      onClick={complatedOrderHandler}
+                      fullWidth
+                    >
+                      Payment
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            ))
+          ) : (
+            <Box className="mobile-no-orders">
+              <img src="/icons/noimage-list.svg" alt="No orders" />
+              <Typography>No finished orders</Typography>
+            </Box>
+          )}
+        </Box>
+      </TabPanel>
+    );
+  }
+
   return (
     <TabPanel value="3">
       <Stack>

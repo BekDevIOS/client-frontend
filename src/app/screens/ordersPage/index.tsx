@@ -24,6 +24,9 @@ import { useHistory } from "react-router-dom";
 import "../../../css/order.css";
 import { serverApi } from "../../../lib/config";
 import { MemberType } from "../../../lib/enums/member.enum";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
+import Chip from "@mui/material/Chip";
+import "../../../css/mobile/order.css";
 
 /** REDUX SLICE & SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -47,6 +50,7 @@ export default function OrdersPage(props: OrdersPageProps) {
   const { callHandler } = props;
   const { orderBulder, authMember, authTable } = useGlobals();
   const history = useHistory();
+  const device = useDeviceDetect();
   const [value, setValue] = useState("1");
   const [orderInquiry, setOrderInquiry] = useState<OrderInquiry>({
     page: 1,
@@ -93,7 +97,50 @@ export default function OrdersPage(props: OrdersPageProps) {
     setValue(newValue);
   };
 
-  if (!authMember && !authTable) history.push("/");
+  // if (!authMember && !authTable) history.push("/");
+
+  if (device === "mobile") {
+    return (
+      <div className="mobile-orders-page">
+        {/* Tab Navigation */}
+        <Box className="mobile-orders">
+          <Box className="mobile-orders-tabs">
+            <Chip
+              label="Paused"
+              onClick={() => setValue("1")}
+              className={`mobile-order-tab-chip ${
+                value === "1" ? "active" : ""
+              }`}
+            />
+            <Chip
+              label="Processing"
+              onClick={() => setValue("2")}
+              className={`mobile-order-tab-chip ${
+                value === "2" ? "active" : ""
+              }`}
+            />
+            <Chip
+              label="Finished"
+              onClick={() => setValue("3")}
+              className={`mobile-order-tab-chip ${
+                value === "3" ? "active" : ""
+              }`}
+            />
+          </Box>
+        </Box>
+
+        {/* Orders Content */}
+        <Box className="mobile-orders-container">
+          <TabContext value={value}>
+            <PausedOrders setValue={setValue} />
+            <ProcessOrders setValue={setValue} callHandler={callHandler} />
+            <FinishedOrders />
+          </TabContext>
+        </Box>
+      </div>
+    );
+  }
+
   return (
     <div className="order-page">
       <Container className="order-container">

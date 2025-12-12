@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import Statistics from "./Statistics";
 import PopularDishes from "./PopularDishes";
 import NewDishes from "./NewDishes";
@@ -13,6 +14,8 @@ import ProductService from "../../services/ProductService";
 import { ProductCollection } from "../../../lib/enums/product.enums";
 import MemberService from "../../services/MemberService";
 import { Member } from "../../../lib/types/member";
+import { useGlobals } from "../../hooks/useGlobals";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 import "../../../css/home.css";
 
 /** REDUX SLICE & SELECTOR */
@@ -23,9 +26,19 @@ const actionDispatch = (dispatch: Dispatch) => ({
 });
 
 export default function HomePage() {
+  const history = useHistory();
+  const { authTable } = useGlobals();
+  const device = useDeviceDetect();
   const { setPopularDishes, setNewDishes, setTopUsers } = actionDispatch(
     useDispatch()
   );
+
+  // Redirect authTable to products page
+  useEffect(() => {
+    if (authTable) {
+      history.push("/products");
+    }
+  }, [authTable, history]);
 
   useEffect(() => {
     const product = new ProductService();
@@ -64,6 +77,9 @@ export default function HomePage() {
       });
   }, []);
 
+  if(device === "mobile") {
+    return <div>Mobile Home Page</div>;
+  } else {
   return (
     <div className="homepage">
       <Statistics />
@@ -73,5 +89,6 @@ export default function HomePage() {
       <ActiveUsers />
       <Events />
     </div>
-  );
+    );
+  }
 }

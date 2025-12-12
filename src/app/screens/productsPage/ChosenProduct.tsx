@@ -9,7 +9,8 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
-import { FreeMode, Navigation, Thumbs } from "swiper";
+import "swiper/css/pagination";
+import { FreeMode, Navigation, Thumbs, Pagination } from "swiper";
 
 import { useDispatch, useSelector } from "react-redux";
 import { createSelector, Dispatch } from "@reduxjs/toolkit";
@@ -22,6 +23,11 @@ import MemberService from "../../services/MemberService";
 import { Member } from "../../../lib/types/member";
 import { serverApi } from "../../../lib/config";
 import { CartItem } from "../../../lib/types/search";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
+import { Typography } from "@mui/material";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import "../../../css/mobile/products.css";
 
 /** REDUX SLICE & SELECTOR */
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -49,7 +55,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
   const { setChosenProdcut, setRestaurant } = actionDispatch(useDispatch());
   const { restaurant } = useSelector(restaurantRetriever);
   const { chosenProduct } = useSelector(chosenProductRetriever);
-
+  const device = useDeviceDetect();
   useEffect(() => {
     const product = new ProductService();
     product
@@ -65,6 +71,104 @@ export default function ChosenProduct(props: ChosenProductProps) {
   }, []);
 
   if (!chosenProduct) return null;
+  if(device === "mobile") {
+    return (
+      <div className="mobile-chosen-product">
+        {/* Image Carousel */}
+        <Box className="mobile-product-image-carousel">
+          <Swiper
+            loop={true}
+            spaceBetween={0}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            modules={[Pagination]}
+            className="mobile-product-swiper"
+          >
+            {chosenProduct?.productImages.map((ele: string, index: number) => {
+              const imagePath = `${serverApi}/${ele}`;
+              return (
+                <SwiperSlide key={index}>
+                  <img className="mobile-product-detail-image" src={imagePath} alt={chosenProduct.productName} />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </Box>
+
+        {/* Product Info */}
+        <Box className="mobile-product-detail-info">
+          {/* Product Name & Restaurant */}
+          <Box className="mobile-product-detail-header">
+            <Typography className="mobile-product-detail-name">
+              {chosenProduct?.productName}
+            </Typography>
+            {restaurant?.memberNick && (
+              <Typography className="mobile-product-detail-restaurant">
+                {restaurant.memberNick}
+              </Typography>
+            )}
+          </Box>
+
+          {/* Rating & Views */}
+          <Box className="mobile-product-detail-meta">
+            <Rating 
+              name="product-rating" 
+              defaultValue={2.5} 
+              precision={0.5}
+              size="small"
+              readOnly
+            />
+            <Box className="mobile-product-detail-views">
+              <RemoveRedEyeIcon className="mobile-views-icon-small" />
+              <span>{chosenProduct.productViews}</span>
+            </Box>
+          </Box>
+
+          {/* Price */}
+          <Box className="mobile-product-detail-price-section">
+            <Box className="mobile-product-detail-price">
+              <MonetizationOnIcon className="mobile-price-icon-large" />
+              <Typography className="mobile-price-amount">
+                ${chosenProduct?.productPrice}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Description */}
+          {chosenProduct?.productDesc && (
+            <Box className="mobile-product-detail-description">
+              <Typography className="mobile-description-title">Description</Typography>
+              <Typography className="mobile-description-text">
+                {chosenProduct.productDesc}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Add to Basket Button */}
+          <Box className="mobile-product-detail-actions">
+            <Button
+              variant="contained"
+              fullWidth
+              className="mobile-add-to-basket-btn"
+              startIcon={<AddShoppingCartIcon />}
+              onClick={(e) => {
+                onAdd({
+                  _id: chosenProduct._id,
+                  quantity: 1,
+                  name: chosenProduct.productName,
+                  price: chosenProduct.productPrice,
+                  image: chosenProduct.productImages[0],
+                });
+                e.stopPropagation();
+              }}
+            >
+              Add to Basket
+            </Button>
+          </Box>
+        </Box>
+      </div>
+    );
+  } else {
   return (
     <div className={"chosen-product"}>
       <Box className={"title"}>Product Detail</Box>
@@ -74,7 +178,7 @@ export default function ChosenProduct(props: ChosenProductProps) {
             loop={true}
             spaceBetween={10}
             navigation={true}
-            modules={[FreeMode, Navigation, Thumbs]}
+            modules={[FreeMode, Navigation, Thumbs, Pagination]}
             className="swiper-area"
           >
             {chosenProduct?.productImages.map((ele: string, index: number) => {
@@ -135,5 +239,6 @@ export default function ChosenProduct(props: ChosenProductProps) {
         </Stack>
       </Container>
     </div>
-  );
+    );
+  }
 }

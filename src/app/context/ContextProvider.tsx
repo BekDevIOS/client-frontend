@@ -1,28 +1,41 @@
-import React, { ReactNode, useState } from "react";
-import Cookies from "universal-cookie";
+import React, { ReactNode, useState, useCallback } from "react";
 import { Member } from "../../lib/types/member";
 import { GlobalContext } from "../hooks/useGlobals";
 import { Table } from "../../lib/types/table";
 
 const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const cookies = new Cookies();
-  if (!cookies.get("accessToken")) localStorage.removeItem("memberData");
+  // Initialize state from localStorage
+  const [authMember, setAuthMemberState] = useState<Member | null>(() => {
+    const memberData = localStorage.getItem("memberData");
+    return memberData ? JSON.parse(memberData) : null;
+  });
 
-  const [authMember, setAuthMember] = useState<Member | null>(
-    localStorage.getItem("memberData")
-      ? JSON.parse(localStorage.getItem("memberData") as string)
-      : null
-  );
-  if (!cookies.get("tableToken")) localStorage.removeItem("tableData");
-
-  const [authTable, setAuthTable] = useState<Table | null>(
-    localStorage.getItem("tableData")
-      ? JSON.parse(localStorage.getItem("tableData") as string)
-      : null
-  );
-  console.log("Table>>", authTable)
+  const [authTable, setAuthTableState] = useState<Table | null>(() => {
+    const tableData = localStorage.getItem("tableData");
+    return tableData ? JSON.parse(tableData) : null;
+  });
+  
   const [orderBulder, setOrderBulder] = useState<Date>(new Date());
-  console.log("==== verify =====");
+
+  // Wrapper function to sync setAuthMember with localStorage
+  const setAuthMember = useCallback((member: Member | null) => {
+    setAuthMemberState(member);
+    if (member) {
+      localStorage.setItem("memberData", JSON.stringify(member));
+    } else {
+      localStorage.removeItem("memberData");
+    }
+  }, []);
+
+  // Wrapper function to sync setAuthTable with localStorage
+  const setAuthTable = useCallback((table: Table | null) => {
+    setAuthTableState(table);
+    if (table) {
+      localStorage.setItem("tableData", JSON.stringify(table));
+    } else {
+      localStorage.removeItem("tableData");
+    }
+  }, []);
 
   return (
     <GlobalContext.Provider

@@ -13,6 +13,7 @@ import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import { Logout } from "@mui/icons-material";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 interface HomeNavbarProps {
   cartItems: CartItem[];
@@ -45,7 +46,11 @@ export default function HomeNavbar(props: HomeNavbarProps) {
     handleLogoutClick,
   } = props;
   const { authMember, authTable } = useGlobals();
-
+  const device = useDeviceDetect();
+  
+  if(device === "mobile") {
+    return <div>Mobile Home Navbar</div>;
+  } else {
   return (
     <div className="home-navbar">
       <video autoPlay loop muted playsInline className="bg-video">
@@ -62,11 +67,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             </NavLink>
           </Box>
           <Stack className="links">
-            <Box className="hover-line">
-              <NavLink to="/" activeClassName="underline">
-                Home
-              </NavLink>
-            </Box>
+            {!authTable && (
+              <Box className="hover-line">
+                <NavLink to="/" activeClassName="underline">
+                  Home
+                </NavLink>
+              </Box>
+            )}
             <Box className="hover-line">
               <NavLink to="/products" activeClassName="underline">
                 Products
@@ -196,5 +203,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         </Stack>
       </Container>
     </div>
-  );
+    );
+  }
 }

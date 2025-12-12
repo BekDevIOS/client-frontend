@@ -6,8 +6,6 @@ import {
   Fab,
   Stack,
   TextField,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 import styled from "styled-components";
 import LoginIcon from "@mui/icons-material/Login";
@@ -49,7 +47,6 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
   const [memberNick, setMemberNick] = useState<string>("");
   const [memberPhone, setMemberPhone] = useState<string>("");
   const [memberPassword, setMemberPassword] = useState<string>("");
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const { setAuthMember, setAuthTable } = useGlobals();
 
   const handleUsername = (e: T) => setMemberNick(e.target.value);
@@ -70,7 +67,7 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
         memberNick,
         memberPassword,
         memberPhone,
-        memberType: isAdmin ? MemberType.RESTAURANT : MemberType.USER,
+        memberType: MemberType.USER,
       };
       const member = new MemberService();
       const result = await member.signup(signupInput);
@@ -153,20 +150,6 @@ export default function AuthenticationModal(props: AuthenticationModalProps) {
                 variant="outlined"
                 onChange={handlePassword}
                 onKeyDown={handlePasswordKeyDown}
-              />
-
-              {/* ✅ Checklist for Admin */}
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isAdmin}
-                    onChange={(e) => setIsAdmin(e.target.checked)}
-                    name="isAdmin"
-                    color="primary"
-                  />
-                }
-                label="Sign up as Admin"
-                sx={{ mt: 2 }}
               />
 
               <Fab

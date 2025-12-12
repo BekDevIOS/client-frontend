@@ -11,9 +11,11 @@ import {
 } from "../../../lib/sweetAlert";
 import { Messages, serverApi } from "../../../lib/config";
 import MemberService from "../../services/MemberService";
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 
 export function Settings() {
   const { authMember, setAuthMember } = useGlobals();
+  const device = useDeviceDetect();
   const [memberImage, setMemberImage] = useState<string>(
     authMember?.memberImage
       ? `${serverApi}/${authMember.memberImage}`
@@ -86,6 +88,10 @@ export function Settings() {
       setMemberImage(URL.createObjectURL(file));
     }
   };
+
+  if(device === "mobile") {
+    return <div>Mobile Settings</div>;
+  } else {
   return (
     <Box className={"settings"}>
       <Box className={"member-media-frame"}>
@@ -156,5 +162,6 @@ export function Settings() {
         </Button>
       </Box>
     </Box>
-  );
+    );
+  }
 }

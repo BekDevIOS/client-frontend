@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Box, Container, Stack, Tabs } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Tab from "@mui/material/Tab";
@@ -9,19 +10,32 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Button from "@mui/material/Button";
 import TabContext from "@mui/lab/TabContext";
 import TabPanel from "@mui/lab/TabPanel";
+import { useGlobals } from "../../hooks/useGlobals";
 import "../../../css/help.css";
 import { faq } from "../../../lib/data/faq";
 import { terms } from "../../../lib/data/terms";
-
+import useDeviceDetect from "../../hooks/useDeviceDetect";
 export default function HelpPage() {
-
+  const history = useHistory();
+  const { authTable } = useGlobals();
+  const device = useDeviceDetect();
   const [value, setValue] = React.useState("1");
+
+  // Redirect authTable to products page (authTable cannot access help page)
+  useEffect(() => {
+    if (authTable) {
+      history.push("/products");
+    }
+  }, [authTable, history]);
 
   /** HANDLERS **/
   const handleChange = (e: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 
+  if(device === "mobile") {
+    return <div>Mobile Help Page</div>;
+  } else {
   return (
     <div className={"help-page"}>
       <Container className={"help-container"}>
@@ -124,5 +138,6 @@ export default function HelpPage() {
         </TabContext>
       </Container>
     </div>
-  );
+    );
+  }
 }
